@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld.vue'
+import ToggleShowcase from './components/ToggleShowcase.vue'
 </script>
 
 <template>
@@ -7,6 +8,7 @@ import HelloWorld from './components/HelloWorld.vue'
     <img alt="kaze logo" src="./assets/logo.png" />
   </div>
   <HelloWorld msg="Welcome KAZE web" />
+  <ToggleShowcase />
 </template>
 
 <style scoped>
