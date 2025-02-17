@@ -3,7 +3,7 @@
   <div class="cursor-pointer select-none overflow-visible">
     <div
       class="toggle-proactive"
-      @click="toggle"
+      @click="handleToggle"
     >
       <div
         :id="`${uid}-cat-arm`"
@@ -73,14 +73,16 @@
           </g>
         </svg>
 
+        <!-- track 開關外框 -->
         <div
           class="track z-0"
           :class="currentTrackClass"
         >
+          <!-- thumb 開關圓點 -->
           <div
             class="thumb rounded-full"
             :class="currentThumbClass"
-          />
+          ></div>
         </div>
       </div>
 
@@ -358,7 +360,7 @@
     <input
       type="checkbox"
       class="hidden"
-      @click="toggle"
+      @click="handleToggle"
     >
   </div>
 </template>
@@ -397,6 +399,13 @@ interface Props {
   padColor?: string;
 }
 // #endregion Props
+
+// #region Emits
+interface Emits {
+  'update:modelValue': [value: boolean];
+}
+// #endregion Emits
+
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   size: '4rem',
@@ -412,13 +421,9 @@ const props = withDefaults(defineProps<Props>(), {
   padColor: '#FFA5A5',
 })
 
-// #region Emits
-const emit = defineEmits<{
-  'update:modelValue': [value: boolean];
-}>()
-// #endregion Emits
+const emit = defineEmits<Emits>()
 
-const OBJECT_IDS = [
+const OBJECT_ID_LIST = [
   'cat-elbow',
   'arm',
   'elbow',
@@ -430,7 +435,7 @@ const OBJECT_IDS = [
   'digital-pad-4',
 ] as const
 
-const KEYFRAME_IDS = [
+const KEYFRAME_ID_LIST = [
   'cat-arm-1',
   'cat-arm-2',
   'cat-arm-3',
@@ -445,14 +450,14 @@ const [currentValue, toggleCurrentValue] = useToggle(modelValue.value)
 interface KeyframeOption extends anime.AnimeParams {
   action?: () => void;
   objectAttrMap?: Partial<Record<
-    typeof OBJECT_IDS[number],
+    typeof OBJECT_ID_LIST[number],
     CSSProperties
   >>;
 }
 const keyframeOptionMap: Record<
   'in' | 'out',
   Record<
-    typeof KEYFRAME_IDS[number],
+    typeof KEYFRAME_ID_LIST[number],
     KeyframeOption
   >
 > = {
@@ -504,7 +509,7 @@ const keyframeOptionMap: Record<
 } as const
 
 const [isPlaying, togglePlaying] = useToggle(false)
-
+// ✅ 正確，從 `props` 取值
 const svgClass = ref<string[]>([])
 
 const currentTrackClass = computed(() => {
@@ -542,15 +547,15 @@ const currentThumbClass = computed(() => {
 const keyframeVisible = ref(true)
 /** 儲存 keyframe attr 資料 */
 const keyframeAttrMap: Partial<Record<
-  (typeof KEYFRAME_IDS)[number],
+  (typeof KEYFRAME_ID_LIST)[number],
   Record<
-    (typeof OBJECT_IDS)[number],
+    (typeof OBJECT_ID_LIST)[number],
     Record<string, string>
   >
 >> = {}
 onMounted(() => {
-  KEYFRAME_IDS.forEach((keyframeId) => {
-    OBJECT_IDS.forEach((objectId) => {
+  KEYFRAME_ID_LIST.forEach((keyframeId) => {
+    OBJECT_ID_LIST.forEach((objectId) => {
       // 取得所有 attr
       const attrMap = pipe(
         document.querySelector(`#${uid} #${keyframeId} #${objectId}`)?.attributes,
@@ -575,7 +580,7 @@ onMounted(() => {
       const data = {
         ...keyframeAttrMap[keyframeId],
         [objectId]: attrMap,
-      } as Record<typeof OBJECT_IDS[number], Record<string, string>>
+      } as Record<typeof OBJECT_ID_LIST[number], Record<string, string>>
 
       keyframeAttrMap[keyframeId] = data
     })
@@ -587,9 +592,9 @@ onMounted(() => {
 /** 播放至指定 keyframe */
 function toKeyframe(
   direction: keyof typeof keyframeOptionMap,
-  keyframeId: (typeof KEYFRAME_IDS)[number],
+  keyframeId: (typeof KEYFRAME_ID_LIST)[number],
 ) {
-  const tasks = OBJECT_IDS.map((objectId) => {
+  const tasks = OBJECT_ID_LIST.map((objectId) => {
     // 取得所有 attr
     const attrMap = keyframeAttrMap[keyframeId]?.[objectId]
     if (!attrMap) {
@@ -609,13 +614,13 @@ function toKeyframe(
   return Promise.all(tasks)
 }
 
-const toggle = debounce(() => {
+const handleToggle = debounce(() => {
   if (isPlaying.value)
     return
 
   if (props.disabled) {
     toggleCurrentValue()
-    start()
+    startCatAnimate()
     return
   }
 
@@ -635,7 +640,7 @@ const resetDelayMs = debounce(() => {
 }, 2000)
 
 /** 開始貓貓手動畫 */
-async function start() {
+async function startCatAnimate(delay?: number) {
   if (currentValue.value) {
     svgClass.value = []
   }
@@ -648,7 +653,7 @@ async function start() {
   delayMs = Math.max(0, delayMs - 300)
   resetDelayMs()
 
-  await promiseTimeout(delayMs)
+  await promiseTimeout(delay ?? delayMs)
 
   for (const id of [
     'cat-arm-2',
@@ -674,14 +679,30 @@ async function start() {
 }
 
 onBeforeMount(() => {
-  anime.remove(OBJECT_IDS.map((id) => `#${id}`))
+  anime.remove(OBJECT_ID_LIST.map((id) => `#${id}`))
+})
+
+// #region Methods
+interface Expose {
+  /** 觸發切換動畫 */
+  toggle: () => Promise<void>;
+}
+// #endregion Methods
+
+defineExpose<Expose>({
+  async toggle() {
+    if (isPlaying.value)
+      return
+
+    await startCatAnimate(0)
+
+    modelValue.value = currentValue.value
+  },
 })
 </script>
 
 <style scoped lang="sass">
 .toggle-proactive
-  margin: 4rem
-  position: relative
   aspect-ratio: 1.8
   height: v-bind('props.size')
   .track

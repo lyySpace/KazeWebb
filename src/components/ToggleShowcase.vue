@@ -1,11 +1,10 @@
 <!-- src/components/ToggleShowcase.vue -->
 <template>
-  <div class="w-full min-h-[200px] relative flex items-center justify-center p-8 border border-gray-300">
+  <div class="w-full min-h-[200px] relative flex items-center justify-center p-8">
     <toggle-proactive
       :model-value="true"
       disabled
-      size="6rem"
-      track-inactive-class="bg-red-400"
+      size="4rem"
       track-active-class="bg-green-500"
       fur-color="#e9d680"
       pad-color="#6f6565"
