@@ -7,7 +7,7 @@ import ToggleShowcase from './components/ToggleShowcase.vue'
   <div>
     <img alt="kaze logo" src="./assets/logo.png" />
   </div>
-  <HelloWorld msg="Welcome KAZE web" />
+  <HelloWorld msg="Welcome KAZE" />
   <ToggleShowcase />
 </template>
 
