@@ -1,6 +1,9 @@
 <!-- src/components/ToggleShowcase.vue -->
 <template>
-  <div class="w-full min-h-[200px] relative flex items-center justify-center p-8">
+  <div class="text-container">
+      <h3>強置淺色模式 喵</h3>
+  </div>
+  <div class="w-full min-h-[100px] relative flex items-center justify-center p-8">
     <toggle-proactive
       :model-value="true"
       disabled
