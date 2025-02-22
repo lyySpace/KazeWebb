@@ -4,7 +4,7 @@
   --text-color: #213547;
   --button-bg: #f9f9f9;
   --button-border: transparent;
-  --button-hover-border: #e9d680;
+  --button-hover-border: #646cff;
 }
 
 /* 當 data-theme 為 dark 時，設定深色主題變數 */
@@ -92,15 +92,3 @@ li {
   align-items: center;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #e9d680;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
