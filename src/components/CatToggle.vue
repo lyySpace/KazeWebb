@@ -650,6 +650,9 @@ async function startCatAnimate(delay?: number) {
 
   togglePlaying(true)
 
+  // 在動畫前手動設定深色
+  document.documentElement.dataset.theme = 'dark'
+
   delayMs = Math.max(0, delayMs - 300)
   resetDelayMs()
 
@@ -666,6 +669,9 @@ async function startCatAnimate(delay?: number) {
   // toggle 與 cat-arm-5 同時執行的動畫效果看起來更好
   toggleCurrentValue()
   await toKeyframe('in', 'cat-arm-5')
+
+  // 動畫結束後恢復淺色
+  document.documentElement.dataset.theme = 'light'
 
   for (const id of [
     'cat-arm-4',
