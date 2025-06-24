@@ -90,7 +90,7 @@ function onLeave() {
 
 .liquid-glass {
   width: 250px;
-  height: 25ç0px;
+  height: 250px;
   padding: 1rem;
   background: rgba(51, 94, 234, 0.1);
   background-blend-mode: overlay;
