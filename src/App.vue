@@ -1,6 +1,9 @@
+<!-- src/App.vue -->
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld.vue'
 import ToggleShowcase from './components/ToggleShowcase.vue'
+import LiquidGlass from './components/LiquidGlass.vue'
+import Gallery from './components/TheGallery.vue'
 </script>
 
 <template>
@@ -9,6 +12,8 @@ import ToggleShowcase from './components/ToggleShowcase.vue'
   </div>
   <HelloWorld msg="Welcome KAZE" />
   <ToggleShowcase />
+  <LiquidGlass />
+  <Gallery />
 </template>
 
 <style scoped>
@@ -17,5 +22,9 @@ import ToggleShowcase from './components/ToggleShowcase.vue'
   padding: 1.5em;
   will-change: filter;
   transition: filter 300ms;
+}
+.picture {
+  height: 30em;
+  padding: 1em;
 }
 </style>

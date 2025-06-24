@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!doctype html>
 <html lang="en">
   <head>
@@ -8,6 +9,20 @@
   </head>
   <body>
     <div id="app"></div>
+    <svg width="0" height="0" style="position:absolute">
+      <defs>
+        <!-- Gooey filter -->
+        <filter id="goo">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"/>
+          <feColorMatrix in="blur" mode="matrix"
+            values="1 0 0 0 0
+                    0 1 0 0 0
+                    0 0 1 0 0
+                    0 0 0 20 -10" result="goo"/>
+          <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+        </filter>
+    </svg>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
