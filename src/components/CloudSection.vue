@@ -237,12 +237,13 @@ const onDocumentMouseMove = (event) => {
 
 const spawnCloud = (position, speed) => {
   const normalizedSpeed = Math.min(Math.max(speed, 1), 50);
-  const size = 40 / Math.log(normalizedSpeed + 2) + (Math.random() * 8); 
+  
+  // 這是我們希望在螢幕上看到的「視覺大小」
+  const visualBaseSize = 40 / Math.log(normalizedSpeed + 2) + (Math.random() * 8); 
   
   const colorIndex = Math.floor(Math.random() * CloudPalette.length);
   const color = CloudPalette[colorIndex];
-  
-  const baseOpacityScale = 0.15 / Math.log(normalizedSpeed + 1.2);
+  const baseOpacityScale = 0.23 / Math.log(normalizedSpeed + 1.2);
 
   const material = new THREE.SpriteMaterial({
     map: cloudTexture,
@@ -261,8 +262,22 @@ const spawnCloud = (position, speed) => {
     position.y + (Math.random() - 0.5) * jitter,
     position.z + (Math.random() - 0.5) * 10 
   );
-  sprite.scale.set(size, size, 1);
+
+  // --- 修改重點：只在生成瞬間計算一次大小 ---
   
+  // 1. 計算相機到生成點的距離
+  const distance = camera.position.distanceTo(position);
+  
+  // 2. 計算補償係數
+  // 200 是我們的參考距離 (相機初始 Z 軸位置)
+  // 如果距離變遠 (例如 1000)，factor = 5，雲實際尺寸變大 5 倍 -> 螢幕上看一樣大
+  const scaleFactor = distance / 200; 
+  
+  // 3. 設定最終的 3D 實際大小
+  const final3DSize = visualBaseSize * scaleFactor;
+  
+  sprite.scale.set(final3DSize, final3DSize, 1);
+
   sprite.userData = {
     baseOpacityScale: baseOpacityScale,
     rotationSpeed: (Math.random() - 0.5) * 0.01
@@ -290,8 +305,11 @@ const animate = () => {
       cloudBlocks.splice(i, 1);
     } else {
       block.sprites.forEach(sprite => {
-        sprite.material.opacity = block.blockOpacity * sprite.userData.baseOpacityScale;
-        sprite.material.rotation += sprite.userData.rotationSpeed;
+        const data = sprite.userData;
+        
+        // --- 修改重點：這裡只更新透明度與旋轉，不再觸碰 Scale ---
+        sprite.material.opacity = block.blockOpacity * data.baseOpacityScale;
+        sprite.material.rotation += data.rotationSpeed;
       });
     }
   }
