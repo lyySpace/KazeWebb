@@ -4,6 +4,7 @@ import HelloWorld from './components/HelloWorld.vue'
 import ToggleShowcase from './components/ToggleShowcase.vue'
 import LiquidGlass from './components/LiquidGlass.vue'
 import Gallery from './components/TheGallery.vue'
+import CloudSection from './components/CloudSection.vue'
 </script>
 
 <template>
@@ -14,6 +15,7 @@ import Gallery from './components/TheGallery.vue'
   <ToggleShowcase />
   <LiquidGlass />
   <Gallery />
+  <CloudSection/>
 </template>
 
 <style scoped>
